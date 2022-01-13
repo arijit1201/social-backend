@@ -91,9 +91,9 @@ router.get("/:id", async (req, res) => {
   });
 
 //get all timeline posts
-router.get("/timeline/all", async (req, res) => {
+router.get("/timeline/:userId", async (req, res) => {
     try {
-      const currentUser = await User.findById(req.body.userId);
+      const currentUser = await User.findById(req.params.userId);
       const userPosts = await Post.find({ userId: currentUser._id });
       //have to get more understanding of Promise and map
       const friendPosts = await Promise.all(
@@ -102,7 +102,7 @@ router.get("/timeline/all", async (req, res) => {
         })
       );
       // ... is also known as spread syntax in javascript Spread syntax can be used when all elements from an object or array need to be included in a list of some kind.
-      res.json(userPosts.concat(...friendPosts).sort((b, a) => {
+      res.status(200).json(userPosts.concat(...friendPosts).sort((b, a) => {
           return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
         }))
     } catch (err) {
